@@ -128,11 +128,17 @@ export function SubmitDialog({
           )}
           <Button
             type="button"
-            onClick={onConfirmSubmit}
-            disabled={isSubmitting || isAutoSubmit}
+            onClick={() => onConfirmSubmit({ automatic: isAutoSubmit })}
+            disabled={isSubmitting || (isAutoSubmit && !error)}
             className="w-full sm:w-auto"
           >
-            {isSubmitting || isAutoSubmit ? "Finalizing…" : "Confirm & Submit"}
+            {isSubmitting
+              ? "Finalizing…"
+              : isAutoSubmit
+                ? error
+                  ? "Retry Submit"
+                  : "Finalizing…"
+                : "Confirm & Submit"}
           </Button>
         </div>
       </div>

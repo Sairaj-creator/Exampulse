@@ -134,6 +134,8 @@ export async function getAttemptResult({ attemptId, user }) {
   let ranking = null;
   const showRanking = user.role !== "student" || now > exam.endTime;
   if (showRanking) {
+    // Finalize timed-out attempts first so rank matches the leaderboard.
+    await finalizeExpired(exam._id);
     const rankedAttempts = await computeExamRanking(exam._id);
     const myRanked = rankedAttempts.find(
       (r) => r._id.toString() === attempt._id.toString(),

@@ -14,6 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { StudentExamsPage } from "../pages/student/StudentExamsPage";
 import { ExamInstructionsPage } from "../pages/student/ExamInstructionsPage";
 import { ExamRoom } from "../features/attempt/ExamRoom";
+import { SubmitDialog } from "../features/attempt/SubmitDialog";
 import * as attemptApi from "../features/attempt/api";
 import { useAutosave } from "../features/attempt/useAutosave";
 import { useCountdown } from "../features/attempt/useCountdown";
@@ -426,5 +427,38 @@ describe("Student Exam-Taking Flow (Phase 6)", () => {
 
     expect(attemptApi.submitAttemptApi).toHaveBeenCalledWith("attempt-timeout");
     expect(screen.getByText("Exam Submitted Successfully")).toBeInTheDocument();
+  });
+
+  it("lets the student retry when an automatic submit fails", () => {
+    const onConfirmSubmit = vi.fn();
+    render(
+      <SubmitDialog
+        open
+        onOpenChange={() => {}}
+        questions={[]}
+        answers={[]}
+        onConfirmSubmit={onConfirmSubmit}
+        isAutoSubmit
+        error="Submission failed. Please try again."
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Retry Submit" }));
+    expect(onConfirmSubmit).toHaveBeenCalledWith({ automatic: true });
+  });
+
+  it("keeps the confirm button locked while an automatic submit is in progress", () => {
+    render(
+      <SubmitDialog
+        open
+        onOpenChange={() => {}}
+        questions={[]}
+        answers={[]}
+        onConfirmSubmit={vi.fn()}
+        isAutoSubmit
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Finalizing…" })).toBeDisabled();
   });
 });
