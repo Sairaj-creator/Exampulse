@@ -10,6 +10,8 @@ import { hashPassword } from "../src/utils/passwords.js";
 describe("Authentication & RBAC Integration Tests", () => {
   let app;
   let testBatch;
+  const adminEmail = "admin@test-auth.dev";
+  const adminPassword = "AdminPass123";
 
   beforeAll(async () => {
     const env = loadEnv();
@@ -22,6 +24,15 @@ describe("Authentication & RBAC Integration Tests", () => {
     testBatch = await Batch.create({
       name: "TEST-BATCH-AUTH",
       year: 2026,
+    });
+
+    // Own admin fixture so the suite does not depend on seeded data
+    await User.deleteOne({ email: adminEmail });
+    await User.create({
+      name: "Auth Test Admin",
+      email: adminEmail,
+      passwordHash: await hashPassword(adminPassword),
+      role: "admin",
     });
   });
 
@@ -171,8 +182,8 @@ describe("Authentication & RBAC Integration Tests", () => {
     it("restores session when valid cookie is provided", async () => {
       // Login first to get cookie
       const loginRes = await request(app).post("/api/auth/login").send({
-        email: "admin@exampulse.dev",
-        password: "Admin@123",
+        email: adminEmail,
+        password: adminPassword,
       });
 
       const cookie = loginRes.headers["set-cookie"];
@@ -181,7 +192,7 @@ describe("Authentication & RBAC Integration Tests", () => {
         .get("/api/auth/me")
         .set("Cookie", cookie);
       expect(meRes.status).toBe(200);
-      expect(meRes.body.data.user.email).toBe("admin@exampulse.dev");
+      expect(meRes.body.data.user.email).toBe(adminEmail);
       expect(meRes.body.data.user.role).toBe("admin");
     });
 
@@ -195,8 +206,8 @@ describe("Authentication & RBAC Integration Tests", () => {
   describe("POST /api/auth/logout", () => {
     it("clears session cookie", async () => {
       const loginRes = await request(app).post("/api/auth/login").send({
-        email: "admin@exampulse.dev",
-        password: "Admin@123",
+        email: adminEmail,
+        password: adminPassword,
       });
       const cookie = loginRes.headers["set-cookie"];
 
