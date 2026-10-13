@@ -1,6 +1,8 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { AlertCircle, CheckCircle, Clock } from "lucide-react";
 import { Button } from "../../components/ui/button";
+import { useEscapeKey } from "../../hooks/useEscapeKey";
 
 export function SubmitDialog({
   open,
@@ -12,6 +14,10 @@ export function SubmitDialog({
   isAutoSubmit = false,
   error = "",
 }) {
+  // Escape cancels a manual submit; an automatic one cannot be dismissed.
+  useEscapeKey(open && !isAutoSubmit && !isSubmitting, () =>
+    onOpenChange(false),
+  );
   if (!open) return null;
 
   const answerMap = new Map();
@@ -38,13 +44,13 @@ export function SubmitDialog({
 
   const unansweredCount = questions.length - answeredCount;
 
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in"
+      className="animate-fade fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
     >
-      <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-stone-200 space-y-5 animate-in zoom-in-95">
+      <div className="glass-strong animate-pop bg-white rounded-2xl max-w-md w-full p-6 space-y-5">
         <div className="flex items-center gap-3">
           <div
             className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
@@ -99,8 +105,12 @@ export function SubmitDialog({
           <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
             <AlertCircle size={16} className="shrink-0 mt-0.5 text-amber-600" />
             <span>
-              You have <strong>{unansweredCount} unanswered</strong> questions.
-              Once submitted, you cannot return to modify answers.
+              You have{" "}
+              <strong>
+                {unansweredCount} unanswered{" "}
+                {unansweredCount === 1 ? "question" : "questions"}
+              </strong>
+              . Once submitted, you cannot return to modify answers.
             </span>
           </div>
         )}
@@ -142,6 +152,7 @@ export function SubmitDialog({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
