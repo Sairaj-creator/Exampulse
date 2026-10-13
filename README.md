@@ -19,7 +19,9 @@ ExamPulse is a MERN online examination and performance analytics system. Phases 
 - Query-backed loading, zero-data, retryable error, and responsive chart states across analytics views.
 - Production bundle chunking, a root error boundary, mobile exam-room palette controls, printable result reports, and server security hardening checks.
 - Responsive React layouts, mobile table cards, confirmation/form dialogs, and toast feedback.
-- Idempotent analytics seed with one admin, three teachers, 60 students, three batches, four subjects, six ended exams, 300+ graded attempts, and live/upcoming/draft examples.
+- A token-based design system with light and dark themes, glass surfaces, a 3D landing scene, pointer-tracked tilt, and an in-app switch that turns animations off.
+- Rate limiting that counts signed-in traffic per account, so a classroom sharing one IP address is not throttled as a single user.
+- Idempotent analytics seed with one admin, three teachers, 60 students, three batches, four subjects, 35 questions (a starter bank of ten for each subject that has none), six ended exams, 300+ graded attempts, and live/upcoming/draft examples.
 
 Deployment and final documentation/demo rehearsal belong to the remaining phases.
 
@@ -35,6 +37,8 @@ Requires Node 20.19+ (Node 22.12+ recommended) and MongoDB.
 
 Vite proxies `/api` to the Express server on port 5000. In production, Express serves `client/dist` from the same origin.
 
+When the API runs behind a reverse proxy or a hosting platform's load balancer, set `TRUST_PROXY` to the number of proxy hops (usually `1`). Without it every visitor appears to come from the proxy's address and shares one anonymous rate-limit budget.
+
 ## Demo accounts
 
 The seed creates these local development accounts:
@@ -45,14 +49,14 @@ The seed creates these local development accounts:
 | Teacher | `teacher1@exampulse.dev` | `Teacher@123` |
 | Student | `student@exampulse.dev`  | `Student@123` |
 
-Seed credentials are for local/demo use only.
+Seed credentials are for local/demo use only. The seed refuses to run when `NODE_ENV=production` unless `--force` is passed.
 
 ## Commands
 
 - `npm run dev`: run API and frontend with reload.
 - `npm run seed`: create missing demo records without deleting data.
 - `npm run seed -- -- --reset`: clear ExamPulse collections and rebuild demo records.
-- `npm test`: run server and client tests.
+- `npm test`: run server and client tests. Server tests need a reachable MongoDB (`MONGO_URI`) but create their own fixtures, so the database does not have to be seeded.
 - `npm run lint`: run ESLint across both workspaces.
 - `npm run build`: create the production frontend bundle.
 - `npm start`: run the API and serve the built client when `NODE_ENV=production`.
@@ -62,6 +66,23 @@ Seed credentials are for local/demo use only.
 The backend follows routes → controllers → services → models. Controllers shape HTTP responses; services own business rules such as student batch requirements, last-admin protection, and guarded deletion. API responses use `{ success, data, meta? }` and `{ success: false, error }` envelopes.
 
 The client uses React Router for navigation, TanStack Query for server state, Axios with cookie credentials, and an authentication context for the active user. Feature APIs live under `client/src/features` and reusable controls under `client/src/components`.
+
+## Design system
+
+Colours are CSS variables in `client/src/styles/tokens.css`, exposed to Tailwind in `client/tailwind.config.js`. The Tailwind ramp names are kept as roles, so existing classes keep working:
+
+| Tailwind name        | Role                    | Palette               |
+| -------------------- | ----------------------- | --------------------- |
+| `stone`              | neutrals, text, borders | warm bone to graphite |
+| `emerald`, `primary` | brand and success       | pine                  |
+| `amber`, `accent`    | accent and warning      | marigold              |
+| `rose`, `red`        | danger                  | brick                 |
+| `blue`               | information             | steel                 |
+| `purple`             | administrator role      | plum                  |
+
+The dark theme reverses every ramp (including `white`), which is why components need no `dark:` variants. To change the palette, edit the hex values in `tokens.css` and keep each ramp running from light to dark.
+
+`client/src/styles/globals.css` holds the rest: the ambient backdrop, glass surfaces (`.glass`, `.glass-strong`, and any `bg-white` panel with a `rounded-2xl` or larger radius), form controls, toggles, motion and the 3D primitives. Theme and animation preferences are stored in `localStorage` (`ep-theme`, `ep-motion`), applied before first paint by `client/public/theme-init.js`, and managed by `ThemeProvider`. Fonts (Manrope, Fraunces, JetBrains Mono) are bundled from `@fontsource-variable`, so the app makes no third-party requests.
 
 See [the blueprint](docs/blueprint.md) for the full contract and [implementation progress](docs/progress.md) for verified phase details.
 
