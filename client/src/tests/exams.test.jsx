@@ -1,9 +1,16 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
-import { beforeEach, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { ExamBuilderPage } from "../pages/teacher/ExamBuilderPage";
 import { ExamsPage } from "../pages/teacher/ExamsPage";
+import * as examsApi from "../features/exams/api";
 
 vi.mock("../hooks/useAuth", () => ({
   useAuth: () => ({
@@ -87,6 +94,7 @@ function renderPage(component, path) {
 }
 
 beforeEach(() => vi.clearAllMocks());
+afterEach(() => cleanup());
 
 it("shows teacher exams with lifecycle state and builder navigation", async () => {
   renderPage(<ExamsPage />, "/teacher/exams");
@@ -130,4 +138,78 @@ it("moves through the four builder steps with a selected question and batch", as
   expect(
     screen.getByRole("button", { name: /publish exam/i }),
   ).toBeInTheDocument();
+});
+
+it("retries a failed publish on the same draft instead of creating a second exam", async () => {
+  const draft = { _id: "exam-new", questions: [] };
+  examsApi.createExamApi.mockResolvedValue(draft);
+  examsApi.updateExamApi.mockResolvedValue(draft);
+  examsApi.addExamQuestionsApi.mockResolvedValue(draft);
+  examsApi.reorderExamQuestionsApi.mockResolvedValue(draft);
+  examsApi.getExamApi.mockResolvedValue({
+    _id: "exam-new",
+    questions: [
+      { _id: "snapshot-1", sourceQuestionId: "question-1", marks: 2 },
+    ],
+  });
+  examsApi.publishExamApi
+    .mockRejectedValueOnce({ message: "Publishing is temporarily unavailable" })
+    .mockResolvedValueOnce(draft);
+
+  renderPage(<ExamBuilderPage />, "/teacher/exams/new");
+  fireEvent.change(screen.getByLabelText(/exam title/i), {
+    target: { value: "Database Quiz" },
+  });
+  await screen.findByRole("option", { name: /cs301 · dbms/i });
+  fireEvent.change(screen.getByLabelText(/subject/i), {
+    target: { value: "subject-1" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+  fireEvent.click(
+    await screen.findByRole("checkbox", {
+      name: /which database stores documents as bson/i,
+    }),
+  );
+  fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+  fireEvent.click(await screen.findByRole("checkbox", { name: /cse-a/i }));
+  fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+
+  fireEvent.click(screen.getByRole("button", { name: /publish exam/i }));
+  expect(
+    await screen.findByText("Publishing is temporarily unavailable"),
+  ).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole("button", { name: /publish exam/i }));
+  await waitFor(() => expect(examsApi.publishExamApi).toHaveBeenCalledTimes(2));
+  expect(examsApi.createExamApi).toHaveBeenCalledTimes(1);
+  expect(examsApi.updateExamApi).toHaveBeenCalledWith(
+    "exam-new",
+    expect.objectContaining({ title: "Database Quiz" }),
+  );
+});
+
+it("rejects invalid question marks before leaving the questions step", async () => {
+  renderPage(<ExamBuilderPage />, "/teacher/exams/new");
+  fireEvent.change(screen.getByLabelText(/exam title/i), {
+    target: { value: "Database Quiz" },
+  });
+  await screen.findByRole("option", { name: /cs301 · dbms/i });
+  fireEvent.change(screen.getByLabelText(/subject/i), {
+    target: { value: "subject-1" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+  fireEvent.click(
+    await screen.findByRole("checkbox", {
+      name: /which database stores documents as bson/i,
+    }),
+  );
+  fireEvent.change(screen.getByLabelText("Marks for question 1"), {
+    target: { value: "0" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+
+  expect(screen.getByRole("alert")).toHaveTextContent(
+    "Marks for every question must be between 0.5 and 100.",
+  );
+  expect(screen.getByText("Choose questions")).toBeInTheDocument();
 });
