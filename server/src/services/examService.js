@@ -207,11 +207,10 @@ export async function deleteExam({ user, id }) {
 export async function addQuestions({ user, id, questionIds }) {
   const exam = await ownedExam(user, id);
   assertDraft(exam);
-  const questions = await Question.find({
-    _id: { $in: questionIds },
-    createdBy: user._id,
-    isArchived: false,
-  });
+  // Teachers build from their own bank; admins manage every bank.
+  const filter = { _id: { $in: questionIds }, isArchived: false };
+  if (user.role === "teacher") filter.createdBy = user._id;
+  const questions = await Question.find(filter);
   const byId = new Map(
     questions.map((question) => [question._id.toString(), question]),
   );
