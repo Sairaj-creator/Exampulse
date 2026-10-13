@@ -9,13 +9,21 @@ export function AtRiskStudentsList({ atRisk = [] }) {
         <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2">
           <CheckCircle size={20} />
         </div>
-        <h4 className="text-sm font-bold text-stone-800">No At-Risk Students</h4>
+        <h4 className="text-sm font-bold text-stone-800">
+          No At-Risk Students
+        </h4>
         <p className="text-xs text-stone-400 mt-1 max-w-sm">
-          All students who took recent exams are meeting or exceeding the passing thresholds.
+          All students who took recent exams are meeting or exceeding the
+          passing thresholds.
         </p>
       </div>
     );
   }
+
+  const mostAtRiskFirst = [...atRisk].sort(
+    (a, b) =>
+      a.recentAverage - a.passThreshold - (b.recentAverage - b.passThreshold),
+  );
 
   return (
     <div className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 shadow-xs">
@@ -25,7 +33,9 @@ export function AtRiskStudentsList({ atRisk = [] }) {
             <AlertTriangle size={18} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-stone-900">At-Risk Students</h3>
+            <h3 className="text-sm font-bold text-stone-900">
+              At-Risk Students
+            </h3>
             <p className="text-xs text-stone-400">
               Students averaging below passing grade across their last 2 exams
             </p>
@@ -36,15 +46,18 @@ export function AtRiskStudentsList({ atRisk = [] }) {
         </span>
       </div>
 
-      <div className="divide-y divide-stone-100">
-        {atRisk.map((item) => (
+      {/* Capped height: a long list scrolls instead of stretching the row */}
+      <div className="divide-y divide-stone-100 max-h-[19rem] overflow-y-auto pr-1">
+        {mostAtRiskFirst.map((item) => (
           <div
             key={item.studentId}
             className="py-3.5 first:pt-0 last:pb-0 flex items-center justify-between gap-3 hover:bg-stone-50/50 -mx-2 px-2 rounded-xl transition"
           >
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-9 h-9 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center font-bold text-xs shrink-0">
-                {item.studentName?.charAt(0)?.toUpperCase() || <User size={14} />}
+                {item.studentName?.charAt(0)?.toUpperCase() || (
+                  <User size={14} />
+                )}
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -57,7 +70,9 @@ export function AtRiskStudentsList({ atRisk = [] }) {
                     </span>
                   )}
                 </div>
-                <div className="text-xs text-stone-400 truncate">{item.email}</div>
+                <div className="text-xs text-stone-400 truncate">
+                  {item.email}
+                </div>
               </div>
             </div>
 
