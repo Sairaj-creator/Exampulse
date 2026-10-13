@@ -465,6 +465,12 @@ export async function finalizeAttempt(attemptId, reason = "manual") {
     throw new ApiError(404, "NOT_FOUND", "Exam not found");
   }
 
+  // A timed-out attempt may be finalized long after its deadline (lazily, or
+  // by the sweeper), so it is recorded at the deadline rather than "now".
+  const now = new Date();
+  const submittedAt =
+    reason === "timeout" && now > attempt.expiresAt ? attempt.expiresAt : now;
+
   const result = gradeAttempt({
     examQuestions: exam.questions,
     answers: attempt.answers,
@@ -474,7 +480,7 @@ export async function finalizeAttempt(attemptId, reason = "manual") {
       totalMarks: exam.totalMarks,
     },
     startedAt: attempt.startedAt,
-    submittedAt: new Date(),
+    submittedAt,
     expiresAt: attempt.expiresAt,
   });
 
@@ -484,7 +490,7 @@ export async function finalizeAttempt(attemptId, reason = "manual") {
       $set: {
         status: "submitted",
         submitReason: reason,
-        submittedAt: new Date(),
+        submittedAt,
         result,
       },
     },
