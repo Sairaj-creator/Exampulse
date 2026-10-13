@@ -14,7 +14,11 @@ export class ErrorBoundary extends Component {
   componentDidCatch(error, errorInfo) {
     this.setState({ errorInfo });
     // In production, errors could be routed to an observability pipeline
-    console.error("ExamPulse Application ErrorBoundary caught:", error, errorInfo);
+    console.error(
+      "ExamPulse Application ErrorBoundary caught:",
+      error,
+      errorInfo,
+    );
   }
 
   handleReset = () => {
@@ -31,8 +35,8 @@ export class ErrorBoundary extends Component {
       }
 
       return (
-        <div className="min-h-screen bg-[#f6f7f3] text-[#172f29] flex flex-col items-center justify-center p-6">
-          <div className="max-w-md w-full bg-white border border-[#dfe3dc] rounded-2xl p-6 sm:p-8 shadow-xs text-center space-y-4">
+        <div className="min-h-screen text-stone-900 flex flex-col items-center justify-center p-6">
+          <div className="max-w-md w-full bg-white border border-stone-200 rounded-2xl p-6 sm:p-8 shadow-xs text-center space-y-4">
             <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto shadow-xs">
               <AlertOctagon size={28} />
             </div>
@@ -45,7 +49,8 @@ export class ErrorBoundary extends Component {
                 Something went wrong
               </h1>
               <p className="text-xs text-stone-500 mt-2 leading-relaxed">
-                An unexpected interface exception occurred. Your ongoing answers and server sessions are safely saved.
+                An unexpected interface exception occurred. Your ongoing answers
+                and server sessions are safely saved.
               </p>
             </div>
 
