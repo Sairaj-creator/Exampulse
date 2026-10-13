@@ -379,7 +379,9 @@ export async function getExamAnalytics({ examId, user }) {
   const attemptedCount = allAttempts.length;
   const submittedCount = attempts.length;
   const participationRate =
-    eligibleCount > 0 ? round((attemptedCount / eligibleCount) * 100, 1) : 0;
+    eligibleCount > 0
+      ? Math.min(100, round((attemptedCount / eligibleCount) * 100, 1))
+      : 0;
 
   const percentages = attempts.map((a) => a.result?.percentage ?? 0);
 
