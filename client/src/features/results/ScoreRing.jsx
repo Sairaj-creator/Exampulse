@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CheckCircle2, XCircle } from "lucide-react";
 
 export function ScoreRing({
@@ -10,12 +10,23 @@ export function ScoreRing({
   const radius = 64;
   const circumference = 2 * Math.PI * radius;
   const validPercentage = Math.max(0, Math.min(100, Number(percentage) || 0));
-  const strokeDashoffset = circumference - (validPercentage / 100) * circumference;
+  const targetOffset = circumference - (validPercentage / 100) * circumference;
+
+  // Start empty and sweep to the score once mounted.
+  const [drawn, setDrawn] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setDrawn(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  const strokeDashoffset = drawn ? targetOffset : circumference;
 
   return (
     <div className="bg-white rounded-2xl border border-stone-200 p-6 flex flex-col items-center justify-center text-center shadow-xs">
       <div className="relative w-40 h-40 flex items-center justify-center">
-        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
+        <svg
+          className="w-full h-full transform -rotate-90"
+          viewBox="0 0 160 160"
+        >
           {/* Background circle */}
           <circle
             cx="80"
@@ -36,7 +47,10 @@ export function ScoreRing({
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             fill="transparent"
-            style={{ transition: "stroke-dashoffset 1s ease-out" }}
+            style={{
+              transition:
+                "stroke-dashoffset 1.3s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
           />
         </svg>
 
