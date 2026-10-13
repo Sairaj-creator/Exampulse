@@ -40,7 +40,9 @@ export function QuestionTable({
             <span>•</span>
             <span className="text-stone-600 font-medium">{q.topic}</span>
             <span>•</span>
-            <span className="text-stone-500">{q.options?.length || 0} options</span>
+            <span className="text-stone-500">
+              {q.options?.length || 0} options
+            </span>
           </div>
         </div>
       ),
@@ -71,7 +73,9 @@ export function QuestionTable({
             difficultyColors[q.difficulty] || "bg-stone-100 text-stone-700"
           }`}
         >
-          {q.difficulty ? q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1) : "Medium"}
+          {q.difficulty
+            ? q.difficulty.charAt(0).toUpperCase() + q.difficulty.slice(1)
+            : "Medium"}
         </span>
       ),
     },
@@ -128,7 +132,11 @@ export function QuestionTable({
               type="button"
               onClick={() => onDelete(q)}
               className="p-1.5 rounded-lg text-stone-500 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
-              title={q.isArchived ? "Archive/Delete Question" : "Delete or Archive Question"}
+              title={
+                q.isArchived
+                  ? "Archive/Delete Question"
+                  : "Delete or Archive Question"
+              }
             >
               <Trash2 size={16} />
             </button>
@@ -139,7 +147,7 @@ export function QuestionTable({
   ];
 
   return (
-    <div className="bg-white border border-[#dfe3dc] rounded-2xl overflow-hidden shadow-xs">
+    <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-xs">
       <DataTable
         columns={columns}
         rows={questions}
