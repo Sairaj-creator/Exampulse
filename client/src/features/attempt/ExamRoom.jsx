@@ -291,7 +291,7 @@ export function ExamRoom({ attemptData }) {
   // If already submitted in this session, render completion screen
   if (submittedResult) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <div className="bg-white rounded-3xl border border-stone-200 max-w-lg w-full p-8 text-center space-y-6 shadow-sm">
           <div className="w-16 h-16 bg-emerald-100 text-emerald-800 rounded-2xl mx-auto flex items-center justify-center">
             <CheckCircle2 size={36} />
@@ -345,7 +345,7 @@ export function ExamRoom({ attemptData }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Sticky Focus Header */}
       <header className="sticky top-0 z-40 bg-white border-b border-stone-200 shadow-xs px-4 sm:px-8 py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
