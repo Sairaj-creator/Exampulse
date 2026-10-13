@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   Loader2,
   FileText,
+  CalendarClock,
 } from "lucide-react";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { Button } from "../../components/ui/button";
@@ -17,6 +18,13 @@ import {
   getStudentExamInstructionsApi,
   startOrResumeAttemptApi,
 } from "../../features/attempt/api";
+
+function formatDateTime(value) {
+  return new Date(value).toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
 
 export function ExamInstructionsPage() {
   const { id } = useParams();
@@ -72,7 +80,9 @@ export function ExamInstructionsPage() {
       <DashboardLayout>
         <div className="max-w-xl mx-auto bg-rose-50 border border-rose-200 rounded-2xl p-6 text-center space-y-4 my-8">
           <AlertTriangle size={32} className="text-rose-600 mx-auto" />
-          <h2 className="text-lg font-bold text-rose-900">Unable to Open Exam</h2>
+          <h2 className="text-lg font-bold text-rose-900">
+            Unable to Open Exam
+          </h2>
           <p className="text-xs text-rose-800">{error || "Exam not found"}</p>
           <Button asChild variant="outline" size="sm">
             <Link to="/student/exams">Return to My Exams</Link>
@@ -134,6 +144,24 @@ export function ExamInstructionsPage() {
             </p>
           )}
 
+          {/* Exam window */}
+          <div className="flex items-start gap-3 rounded-xl border border-stone-200 bg-stone-50 p-3.5 text-sm">
+            <CalendarClock
+              size={18}
+              className="mt-0.5 shrink-0 text-emerald-700"
+            />
+            <div>
+              <div className="font-semibold text-stone-900">
+                {isLive ? "Open until " : "Opens "}
+                {formatDateTime(isLive ? exam.endTime : exam.startTime)}
+              </div>
+              <div className="mt-0.5 text-xs text-stone-500">
+                Exam window: {formatDateTime(exam.startTime)} to{" "}
+                {formatDateTime(exam.endTime)}
+              </div>
+            </div>
+          </div>
+
           {/* Quick Specifications Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-stone-100">
             <div className="bg-stone-50 p-3 rounded-xl border border-stone-100">
@@ -184,18 +212,22 @@ export function ExamInstructionsPage() {
             <div className="flex items-start gap-3 p-3 bg-stone-50 rounded-xl border border-stone-100">
               <Clock size={16} className="text-amber-700 shrink-0 mt-0.5" />
               <div>
-                <strong>Server-Authoritative Timer:</strong> Your countdown begins
-                immediately upon clicking start. The clock runs continuously on the
-                central server and will not pause if you close or refresh your tab.
+                <strong>Server-Authoritative Timer:</strong> Your countdown
+                begins immediately upon clicking start. The clock runs
+                continuously on the central server and will not pause if you
+                close or refresh your tab.
               </div>
             </div>
 
             <div className="flex items-start gap-3 p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <CheckCircle2 size={16} className="text-emerald-700 shrink-0 mt-0.5" />
+              <CheckCircle2
+                size={16}
+                className="text-emerald-700 shrink-0 mt-0.5"
+              />
               <div>
                 <strong>Real-Time Autosave:</strong> Every option you click is
-                persisted immediately in the cloud. You do not need to manually save
-                each answer.
+                persisted immediately in the cloud. You do not need to manually
+                save each answer.
               </div>
             </div>
 
@@ -206,8 +238,11 @@ export function ExamInstructionsPage() {
                 {exam.negativeMarking?.enabled ? (
                   <span>
                     Negative marking is active: wrong answers incur a{" "}
-                    <strong>{exam.negativeMarking.penaltyFraction * 100}%</strong>{" "}
-                    deduction of question marks. Unanswered questions carry zero penalty.
+                    <strong>
+                      {Math.round(exam.negativeMarking.penaltyFraction * 100)}%
+                    </strong>{" "}
+                    deduction of question marks. Unanswered questions carry zero
+                    penalty.
                   </span>
                 ) : (
                   <span>
@@ -218,7 +253,10 @@ export function ExamInstructionsPage() {
             </div>
 
             <div className="flex items-start gap-3 p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <AlertTriangle size={16} className="text-purple-700 shrink-0 mt-0.5" />
+              <AlertTriangle
+                size={16}
+                className="text-purple-700 shrink-0 mt-0.5"
+              />
               <div>
                 <strong>Tab Switching & Audit Notice:</strong> Switching browser
                 tabs or minimizing this window is logged and attached to your
@@ -254,8 +292,8 @@ export function ExamInstructionsPage() {
                   htmlFor="agree-checkbox"
                   className="text-xs sm:text-sm font-medium text-stone-800 cursor-pointer select-none"
                 >
-                  I have read, understood, and agree to abide by all the examination
-                  rules and server-timed protocols stated above.
+                  I have read, understood, and agree to abide by all the
+                  examination rules and server-timed protocols stated above.
                 </label>
               </div>
             </div>
@@ -293,7 +331,8 @@ export function ExamInstructionsPage() {
               >
                 {starting ? (
                   <>
-                    <Loader2 size={16} className="animate-spin" /> Resuming Attempt…
+                    <Loader2 size={16} className="animate-spin" /> Resuming
+                    Attempt…
                   </>
                 ) : (
                   <>
@@ -310,7 +349,8 @@ export function ExamInstructionsPage() {
               >
                 {starting ? (
                   <>
-                    <Loader2 size={16} className="animate-spin" /> Initializing Attempt…
+                    <Loader2 size={16} className="animate-spin" /> Initializing
+                    Attempt…
                   </>
                 ) : (
                   <>
