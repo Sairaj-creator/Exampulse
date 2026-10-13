@@ -11,6 +11,7 @@ import {
 } from "../models/index.js";
 import { hashPassword } from "../utils/passwords.js";
 import { gradeAttempt } from "../services/gradingService.js";
+import { seedEmptySubjectBanks } from "./questionBank.js";
 
 export async function runSeed({ reset = false } = {}) {
   console.log(`Starting seed process (reset=${reset})...`);
@@ -287,6 +288,17 @@ export async function runSeed({ reset = false } = {}) {
       q = await Question.create(qData);
     }
     questions.push(q);
+  }
+
+  // 6b. Give every other subject a starter bank, if it has no questions yet
+  const bankReport = await seedEmptySubjectBanks({
+    subjects,
+    owner: teachers[0],
+  });
+  for (const entry of bankReport) {
+    if (entry.added > 0) {
+      console.log(`Added ${entry.added} starter questions to ${entry.code}`);
+    }
   }
 
   // 7. Seed Past & Ended Exams with Realistic Submissions for Analytics
@@ -738,6 +750,13 @@ export async function runSeed({ reset = false } = {}) {
 if (process.argv[1] && process.argv[1].endsWith("seed.js")) {
   try {
     const env = loadEnv();
+    // The seed creates accounts with published demo passwords.
+    if (env.NODE_ENV === "production" && !process.argv.includes("--force")) {
+      console.error(
+        "Refusing to seed demo accounts in production. Re-run with --force if this is intentional.",
+      );
+      process.exit(1);
+    }
     await connectDatabase(env.MONGO_URI);
     const reset = process.argv.includes("--reset");
     await runSeed({ reset });
