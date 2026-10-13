@@ -14,6 +14,8 @@ const schema = z
     MONGO_URI: z.string().regex(/^mongodb(\+srv)?:\/\//),
     JWT_SECRET: z.string().min(32),
     JWT_EXPIRES_IN: z.string().default("8h"),
+    // Number of reverse-proxy hops in front of the API (0 = direct).
+    TRUST_PROXY: z.coerce.number().int().min(0).max(10).default(0),
     COOKIE_SECURE: z
       .enum(["true", "false"])
       .default("false")
