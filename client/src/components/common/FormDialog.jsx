@@ -1,15 +1,18 @@
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { useEscapeKey } from "../../hooks/useEscapeKey";
 
 export function FormDialog({ open, title, description, children, onClose }) {
+  useEscapeKey(open, onClose);
   if (!open) return null;
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4"
+      className="animate-fade fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/45 p-4 backdrop-blur-sm"
       role="presentation"
       onMouseDown={(event) => event.target === event.currentTarget && onClose()}
     >
       <div
-        className="my-8 w-full max-w-lg rounded-2xl border border-stone-200 bg-white shadow-2xl"
+        className="glass-strong animate-pop my-8 w-full max-w-lg rounded-2xl bg-white"
         role="dialog"
         aria-modal="true"
         aria-labelledby="form-dialog-title"
@@ -31,7 +34,7 @@ export function FormDialog({ open, title, description, children, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-stone-400 hover:bg-stone-100 hover:text-stone-700"
+            className="rounded-lg p-2 text-stone-400 transition-transform duration-300 hover:rotate-90 hover:bg-stone-100 hover:text-stone-700"
             aria-label="Close dialog"
           >
             <X size={18} />
@@ -39,6 +42,7 @@ export function FormDialog({ open, title, description, children, onClose }) {
         </div>
         <div className="p-6">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
