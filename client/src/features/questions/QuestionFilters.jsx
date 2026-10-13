@@ -1,6 +1,7 @@
 import React from "react";
 import { Search, RotateCcw } from "lucide-react";
 import { Button } from "../../components/ui/button";
+import { Switch } from "../../components/ui/Switch";
 
 export function QuestionFilters({
   filters,
@@ -10,7 +11,7 @@ export function QuestionFilters({
   topics = [],
 }) {
   return (
-    <div className="bg-white border border-[#dfe3dc] rounded-2xl p-4 sm:p-5 shadow-xs space-y-3.5">
+    <div className="bg-white border border-stone-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3.5">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         {/* Search */}
         <div className="relative lg:col-span-2">
@@ -95,11 +96,11 @@ export function QuestionFilters({
 
           {/* Include Archived toggle */}
           <label className="flex items-center gap-2 cursor-pointer font-medium text-stone-600 select-none">
-            <input
-              type="checkbox"
+            <Switch
               checked={Boolean(filters.includeArchived)}
-              onChange={(e) => onChangeFilter("includeArchived", e.target.checked)}
-              className="w-4 h-4 rounded-sm border-stone-300 text-primary focus:ring-primary"
+              onChange={(e) =>
+                onChangeFilter("includeArchived", e.target.checked)
+              }
             />
             <span>Include archived questions</span>
           </label>
