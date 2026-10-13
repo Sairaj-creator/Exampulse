@@ -35,15 +35,25 @@ export function AdminDashboard() {
     queryFn: getAdminOverviewApi,
   });
 
-  const usersByRole = overview?.usersByRole || { admin: 0, teacher: 0, student: 0 };
-  const totalUsers = usersByRole.admin + usersByRole.teacher + usersByRole.student;
+  const usersByRole = overview?.usersByRole || {
+    admin: 0,
+    teacher: 0,
+    student: 0,
+  };
+  const totalUsers =
+    usersByRole.admin + usersByRole.teacher + usersByRole.student;
 
-  const examsByStatus = overview?.examsByStatus || { draft: 0, published: 0, archived: 0 };
-  const totalExams = examsByStatus.draft + examsByStatus.published + examsByStatus.archived;
+  const examsByStatus = overview?.examsByStatus || {
+    draft: 0,
+    published: 0,
+    archived: 0,
+  };
+  const totalExams =
+    examsByStatus.draft + examsByStatus.published + examsByStatus.archived;
 
   const total14DayAttempts = (overview?.attemptsPerDay || []).reduce(
     (acc, curr) => acc + (Number(curr.count) || 0),
-    0
+    0,
   );
 
   if (isLoading) {
@@ -69,7 +79,7 @@ export function AdminDashboard() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Welcome Banner */}
-        <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="bg-white border border-stone-200 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
           <div>
             <div className="text-xs font-bold uppercase tracking-wider text-purple-800 mb-1">
               Platform Administration
@@ -79,7 +89,8 @@ export function AdminDashboard() {
             </h1>
             <p className="text-sm text-stone-500 mt-1 max-w-xl">
               Oversee platform security, manage user accounts and roles, and
-              monitor system-wide assessment volumes and academic subject averages.
+              monitor system-wide assessment volumes and academic subject
+              averages.
             </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
@@ -93,7 +104,7 @@ export function AdminDashboard() {
 
         {/* Metric Cards Shell */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 User Directory
@@ -104,11 +115,12 @@ export function AdminDashboard() {
               {totalUsers}
             </div>
             <div className="text-[11px] text-stone-400 mt-1">
-              {usersByRole.student} students · {usersByRole.teacher} teachers · {usersByRole.admin} admins
+              {usersByRole.student} students · {usersByRole.teacher} teachers ·{" "}
+              {usersByRole.admin} admins
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 Exam Pipeline
@@ -123,7 +135,7 @@ export function AdminDashboard() {
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 14-Day Attempts
@@ -138,7 +150,7 @@ export function AdminDashboard() {
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 Active Subjects
@@ -170,7 +182,7 @@ export function AdminDashboard() {
 
         {/* Administration Modules */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 shadow-xs flex flex-col justify-between">
+          <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs flex flex-col justify-between">
             <div>
               <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center mb-4">
                 <Users size={20} />
@@ -191,7 +203,7 @@ export function AdminDashboard() {
             </Link>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 shadow-xs flex flex-col justify-between">
+          <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs flex flex-col justify-between">
             <div>
               <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center mb-4">
                 <Layers size={20} />
@@ -212,7 +224,7 @@ export function AdminDashboard() {
             </Link>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 shadow-xs flex flex-col justify-between">
+          <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs flex flex-col justify-between">
             <div>
               <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
                 <BookMarked size={20} />
