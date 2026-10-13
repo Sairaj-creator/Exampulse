@@ -1,4 +1,6 @@
+import { createPortal } from "react-dom";
 import { Button } from "../ui/button";
+import { useEscapeKey } from "../../hooks/useEscapeKey";
 
 export function ConfirmDialog({
   open,
@@ -10,15 +12,16 @@ export function ConfirmDialog({
   onConfirm,
   onClose,
 }) {
+  useEscapeKey(open && !busy, onClose);
   if (!open) return null;
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="animate-fade fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm"
       role="presentation"
       onMouseDown={(event) => event.target === event.currentTarget && onClose()}
     >
       <div
-        className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-2xl"
+        className="glass-strong animate-pop w-full max-w-md rounded-2xl bg-white p-6"
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-title"
@@ -41,6 +44,7 @@ export function ConfirmDialog({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
