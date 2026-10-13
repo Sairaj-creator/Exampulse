@@ -2,13 +2,15 @@ import React from "react";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-export function PassFailDonut({ passRate = { passedCount: 0, failedCount: 0, passPercentage: 0 } }) {
+export function PassFailDonut({
+  passRate = { passedCount: 0, failedCount: 0, passPercentage: 0 },
+}) {
   const { passedCount = 0, failedCount = 0, passPercentage = 0 } = passRate;
   const total = passedCount + failedCount;
 
   const data = [
-    { name: "Passed", value: passedCount, color: "#059669" },
-    { name: "Failed", value: failedCount, color: "#e11d48" },
+    { name: "Passed", value: passedCount, color: "rgb(var(--c-emerald-600))" },
+    { name: "Failed", value: failedCount, color: "rgb(var(--c-rose-500))" },
   ];
 
   if (total === 0) {
@@ -17,7 +19,8 @@ export function PassFailDonut({ passRate = { passedCount: 0, failedCount: 0, pas
         <CheckCircle2 size={32} className="text-stone-300 mb-2" />
         <h3 className="text-sm font-bold text-stone-700">No Submissions Yet</h3>
         <p className="text-xs text-stone-400 mt-1 max-w-xs">
-          Pass/fail clearance rate will update automatically as candidates complete the exam.
+          Pass/fail clearance rate will update automatically as candidates
+          complete the exam.
         </p>
       </div>
     );
@@ -26,7 +29,9 @@ export function PassFailDonut({ passRate = { passedCount: 0, failedCount: 0, pas
   return (
     <div className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
       <div>
-        <h3 className="text-sm font-bold text-stone-900">Pass / Fail Clearance Rate</h3>
+        <h3 className="text-sm font-bold text-stone-900">
+          Pass / Fail Clearance Rate
+        </h3>
         <p className="text-xs text-stone-400 mt-0.5">
           Proportion of candidates achieving minimum qualifying standard
         </p>
@@ -41,7 +46,8 @@ export function PassFailDonut({ passRate = { passedCount: 0, failedCount: 0, pas
                   const entry = payload[0];
                   return (
                     <div className="bg-stone-900 text-white rounded-xl px-3 py-1.5 text-xs shadow-lg">
-                      <span className="font-semibold">{entry.name}:</span> {entry.value} candidate{entry.value === 1 ? "" : "s"}
+                      <span className="font-semibold">{entry.name}:</span>{" "}
+                      {entry.value} candidate{entry.value === 1 ? "" : "s"}
                     </div>
                   );
                 }
@@ -64,8 +70,12 @@ export function PassFailDonut({ passRate = { passedCount: 0, failedCount: 0, pas
 
         {/* Center Text */}
         <div className="absolute flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-2xl font-black text-stone-900">{passPercentage}%</span>
-          <span className="text-[10px] uppercase font-bold text-stone-400">Pass Rate</span>
+          <span className="text-2xl font-black text-stone-900">
+            {passPercentage}%
+          </span>
+          <span className="text-[10px] uppercase font-bold text-stone-400">
+            Pass Rate
+          </span>
         </div>
       </div>
 
