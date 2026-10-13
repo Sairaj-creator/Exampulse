@@ -32,7 +32,13 @@ import {
   AnalyticsLoadingState,
 } from "../../features/analytics/AnalyticsQueryState";
 
-const BATCH_COLORS = ["#059669", "#0284c7", "#7c3aed", "#d97706", "#dc2626"];
+const BATCH_COLORS = [
+  "rgb(var(--c-emerald-600))",
+  "rgb(var(--c-blue-500))",
+  "rgb(var(--c-purple-500))",
+  "rgb(var(--c-amber-500))",
+  "rgb(var(--c-rose-500))",
+];
 
 export function TeacherDashboard() {
   const { user } = useAuth();
@@ -77,7 +83,7 @@ export function TeacherDashboard() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Welcome Banner */}
-        <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="bg-white border border-stone-200 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
           <div>
             <div className="text-xs font-bold uppercase tracking-wider text-emerald-800 mb-1">
               Teacher Faculty Portal
@@ -100,7 +106,10 @@ export function TeacherDashboard() {
               </Link>
             </Button>
             <Button asChild>
-              <Link to="/teacher/exams/new" className="flex items-center gap-1.5">
+              <Link
+                to="/teacher/exams/new"
+                className="flex items-center gap-1.5"
+              >
                 <Plus size={16} /> Create Exam
               </Link>
             </Button>
@@ -109,7 +118,7 @@ export function TeacherDashboard() {
 
         {/* Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 Active Exams
@@ -120,11 +129,15 @@ export function TeacherDashboard() {
               {overview?.activeExams ?? 0}
             </div>
             <div className="text-[11px] text-stone-400 mt-1">
-              Out of <span className="font-semibold text-stone-700">{overview?.totalExams ?? 0}</span> total exams
+              Out of{" "}
+              <span className="font-semibold text-stone-700">
+                {overview?.totalExams ?? 0}
+              </span>{" "}
+              total exams
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 Cohort Submissions
@@ -139,7 +152,7 @@ export function TeacherDashboard() {
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 Average Pass Rate
@@ -154,7 +167,7 @@ export function TeacherDashboard() {
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 At-Risk Students
@@ -165,7 +178,7 @@ export function TeacherDashboard() {
               {overview?.atRisk?.length ?? 0}
             </div>
             <div className="text-[11px] text-stone-400 mt-1">
-              Averaging below cutoff (&lt; 40%)
+              Below the pass mark on their last 2 exams
             </div>
           </div>
         </div>
@@ -177,7 +190,9 @@ export function TeacherDashboard() {
             <div className="mb-4">
               <div className="flex items-center gap-2">
                 <TrendingUp size={18} className="text-emerald-700" />
-                <h3 className="text-sm font-bold text-stone-900">Batch Cohort Performance</h3>
+                <h3 className="text-sm font-bold text-stone-900">
+                  Batch Cohort Performance
+                </h3>
               </div>
               <p className="text-xs text-stone-400 mt-0.5">
                 Mean examination score across distinct classroom batches
@@ -191,19 +206,40 @@ export function TeacherDashboard() {
             ) : (
               <div className="w-full h-[240px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={batchData} margin={{ top: 10, right: 15, left: -20, bottom: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0ee" />
-                    <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#78716c" }} />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "#78716c" }} tickFormatter={(v) => `${v}%`} />
+                  <BarChart
+                    data={batchData}
+                    margin={{ top: 10, right: 15, left: -20, bottom: 20 }}
+                  >
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      vertical={false}
+                      stroke="rgb(var(--c-stone-200))"
+                    />
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 11, fill: "rgb(var(--c-stone-500))" }}
+                    />
+                    <YAxis
+                      domain={[0, 100]}
+                      tick={{ fontSize: 11, fill: "rgb(var(--c-stone-500))" }}
+                      tickFormatter={(v) => `${v}%`}
+                    />
                     <Tooltip
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           const entry = payload[0].payload;
                           return (
                             <div className="bg-stone-900 text-white rounded-xl px-3 py-2 text-xs shadow-lg space-y-0.5">
-                              <div className="font-bold text-stone-300">{entry.name}</div>
-                              <div className="text-emerald-400 font-semibold">Average: {entry.Average}%</div>
-                              <div className="text-stone-400 text-[10px]">{entry.attempts} attempt{entry.attempts === 1 ? "" : "s"}</div>
+                              <div className="font-bold text-stone-300">
+                                {entry.name}
+                              </div>
+                              <div className="text-emerald-400 font-semibold">
+                                Average: {entry.Average}%
+                              </div>
+                              <div className="text-stone-400 text-[10px]">
+                                {entry.attempts} attempt
+                                {entry.attempts === 1 ? "" : "s"}
+                              </div>
                             </div>
                           );
                         }
@@ -212,7 +248,10 @@ export function TeacherDashboard() {
                     />
                     <Bar dataKey="Average" radius={[6, 6, 0, 0]}>
                       {batchData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={BATCH_COLORS[index % BATCH_COLORS.length]} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={BATCH_COLORS[index % BATCH_COLORS.length]}
+                        />
                       ))}
                     </Bar>
                   </BarChart>
@@ -230,13 +269,19 @@ export function TeacherDashboard() {
           <div className="bg-white border border-stone-200 rounded-2xl p-5 sm:p-6 shadow-xs">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-sm font-bold text-stone-900">Recent Examinations</h3>
+                <h3 className="text-sm font-bold text-stone-900">
+                  Recent Examinations
+                </h3>
                 <p className="text-xs text-stone-400 mt-0.5">
-                  Latest assessment cycles with real-time pass rates and attempt volumes
+                  Latest assessment cycles with real-time pass rates and attempt
+                  volumes
                 </p>
               </div>
               <Button asChild variant="outline" size="sm">
-                <Link to="/teacher/exams" className="flex items-center gap-1 text-xs">
+                <Link
+                  to="/teacher/exams"
+                  className="flex items-center gap-1 text-xs"
+                >
                   All Exams <ArrowRight size={14} />
                 </Link>
               </Button>
@@ -249,17 +294,27 @@ export function TeacherDashboard() {
                     <th className="pb-3 font-semibold">Exam Title</th>
                     <th className="pb-3 font-semibold">Subject</th>
                     <th className="pb-3 font-semibold text-center">Status</th>
-                    <th className="pb-3 font-semibold text-center">Submissions</th>
+                    <th className="pb-3 font-semibold text-center">
+                      Submissions
+                    </th>
                     <th className="pb-3 font-semibold text-center">Average</th>
-                    <th className="pb-3 font-semibold text-center">Pass Rate</th>
+                    <th className="pb-3 font-semibold text-center">
+                      Pass Rate
+                    </th>
                     <th className="pb-3 font-semibold text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100">
                   {overview.recentExams.map((exam) => (
-                    <tr key={exam._id} className="hover:bg-stone-50/50 transition">
+                    <tr
+                      key={exam._id}
+                      className="hover:bg-stone-50/50 transition"
+                    >
                       <td className="py-3 font-semibold text-stone-900">
-                        <Link to={`/teacher/exams/${exam._id}`} className="hover:text-emerald-700">
+                        <Link
+                          to={`/teacher/exams/${exam._id}`}
+                          className="hover:text-emerald-700"
+                        >
                           {exam.title}
                         </Link>
                       </td>
@@ -283,8 +338,8 @@ export function TeacherDashboard() {
                             exam.passRate >= 70
                               ? "text-emerald-700"
                               : exam.passRate >= 40
-                              ? "text-amber-700"
-                              : "text-rose-700"
+                                ? "text-amber-700"
+                                : "text-rose-700"
                           }`}
                         >
                           {exam.passRate}%
@@ -308,7 +363,7 @@ export function TeacherDashboard() {
 
         {/* Quick Links & Management Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
             <h2 className="text-lg font-bold text-stone-900 mb-2">
               Assessment Management
             </h2>
@@ -340,7 +395,7 @@ export function TeacherDashboard() {
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
             <h2 className="text-lg font-bold text-stone-900 mb-2">
               Assessment Architecture Key Features
             </h2>
