@@ -81,7 +81,7 @@ export function ProfilePage() {
         </div>
 
         {/* Account Details Card */}
-        <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 shadow-xs">
+        <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
           <h2 className="text-base font-bold text-stone-900 mb-4 flex items-center gap-2">
             <User size={18} className="text-stone-600" /> Account Identity
           </h2>
@@ -130,7 +130,7 @@ export function ProfilePage() {
         </div>
 
         {/* Update Name Form */}
-        <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 shadow-xs">
+        <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
           <h2 className="text-base font-bold text-stone-900 mb-4">
             Update Profile Details
           </h2>
@@ -168,7 +168,7 @@ export function ProfilePage() {
         </div>
 
         {/* Change Password Form */}
-        <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 shadow-xs">
+        <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
           <h2 className="text-base font-bold text-stone-900 mb-4 flex items-center gap-2">
             <Lock size={18} className="text-stone-600" /> Change Password
           </h2>
