@@ -11,16 +11,29 @@ import {
 } from "recharts";
 import { BookOpen } from "lucide-react";
 
-const PALETTE = ["#059669", "#0284c7", "#7c3aed", "#d97706", "#dc2626"];
+const PALETTE = [
+  "rgb(var(--c-emerald-600))",
+  "rgb(var(--c-blue-500))",
+  "rgb(var(--c-purple-500))",
+  "rgb(var(--c-amber-500))",
+  "rgb(var(--c-rose-500))",
+];
 
-export function SubjectBarChart({ data = [], height = 300, title = "Subject Performance" }) {
+export function SubjectBarChart({
+  data = [],
+  height = 300,
+  title = "Subject Performance",
+}) {
   if (!data || data.length === 0) {
     return (
       <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs flex flex-col items-center justify-center text-center h-[300px]">
         <BookOpen size={32} className="text-stone-300 mb-2" />
-        <h3 className="text-sm font-bold text-stone-700">No Subject Data Yet</h3>
+        <h3 className="text-sm font-bold text-stone-700">
+          No Subject Data Yet
+        </h3>
         <p className="text-xs text-stone-400 mt-1 max-w-xs">
-          Complete assessments across different curriculum subjects to view disciplinary strengths.
+          Complete assessments across different curriculum subjects to view
+          disciplinary strengths.
         </p>
       </div>
     );
@@ -45,15 +58,22 @@ export function SubjectBarChart({ data = [], height = 300, title = "Subject Perf
 
       <div style={{ width: "100%", height }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} margin={{ top: 10, right: 20, left: -15, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0ee" />
+          <BarChart
+            data={chartData}
+            margin={{ top: 10, right: 20, left: -15, bottom: 20 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="rgb(var(--c-stone-200))"
+            />
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 11, fill: "#78716c" }}
+              tick={{ fontSize: 11, fill: "rgb(var(--c-stone-500))" }}
             />
             <YAxis
               domain={[0, 100]}
-              tick={{ fontSize: 11, fill: "#78716c" }}
+              tick={{ fontSize: 11, fill: "rgb(var(--c-stone-500))" }}
               tickFormatter={(v) => `${v}%`}
             />
             <Tooltip
@@ -62,7 +82,9 @@ export function SubjectBarChart({ data = [], height = 300, title = "Subject Perf
                   const entry = payload[0].payload;
                   return (
                     <div className="bg-stone-900 text-white rounded-xl px-3 py-2 text-xs shadow-lg space-y-1">
-                      <div className="font-bold text-stone-200">{entry.fullName}</div>
+                      <div className="font-bold text-stone-200">
+                        {entry.fullName}
+                      </div>
                       <div className="text-emerald-400 font-semibold">
                         Average: {entry.averagePercentage}%
                       </div>
@@ -78,7 +100,10 @@ export function SubjectBarChart({ data = [], height = 300, title = "Subject Perf
             />
             <Bar dataKey="averagePercentage" radius={[6, 6, 0, 0]}>
               {chartData.map((_, index) => (
-                <Cell key={`cell-${index}`} fill={PALETTE[index % PALETTE.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={PALETTE[index % PALETTE.length]}
+                />
               ))}
             </Bar>
           </BarChart>
