@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   PlayCircle,
   RotateCw,
+  CalendarClock,
 } from "lucide-react";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { Button } from "../../components/ui/button";
@@ -206,6 +207,27 @@ export function StudentExamsPage() {
                       <p className="text-xs text-stone-500 line-clamp-2 leading-relaxed">
                         {exam.description}
                       </p>
+                    )}
+
+                    {!isSubmitted && (
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-stone-600">
+                        <CalendarClock size={14} className="text-stone-400" />
+                        <span>
+                          {isLive
+                            ? "Closes "
+                            : exam.phase === "ended"
+                              ? "Closed "
+                              : "Opens "}
+                          {new Date(
+                            isLive || exam.phase === "ended"
+                              ? exam.endTime
+                              : exam.startTime,
+                          ).toLocaleString(undefined, {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })}
+                        </span>
+                      </div>
                     )}
 
                     {/* Meta stats */}
