@@ -23,7 +23,12 @@ export function QuestionBankPage() {
   const { user } = useAuth();
 
   const [questions, setQuestions] = useState([]);
-  const [meta, setMeta] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
+  const [meta, setMeta] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1,
+  });
   const [loading, setLoading] = useState(true);
   const [subjects, setSubjects] = useState([]);
   const [topics, setTopics] = useState([]);
@@ -85,7 +90,10 @@ export function QuestionBankPage() {
       setQuestions(result.questions || []);
       setMeta(result.meta || { page: 1, limit: 10, total: 0, totalPages: 1 });
     } catch (err) {
-      setFeedback({ type: "error", message: err.message || "Failed to load questions" });
+      setFeedback({
+        type: "error",
+        message: err.message || "Failed to load questions",
+      });
     } finally {
       setLoading(false);
     }
@@ -145,10 +153,16 @@ export function QuestionBankPage() {
     try {
       if (selectedQuestion) {
         await updateQuestionApi(selectedQuestion._id, payload);
-        setFeedback({ type: "success", message: "Question successfully updated." });
+        setFeedback({
+          type: "success",
+          message: "Question successfully updated.",
+        });
       } else {
         await createQuestionApi(payload);
-        setFeedback({ type: "success", message: "New question successfully added to bank." });
+        setFeedback({
+          type: "success",
+          message: "New question successfully added to bank.",
+        });
       }
       setFormOpen(false);
       setSelectedQuestion(null);
@@ -166,14 +180,19 @@ export function QuestionBankPage() {
       const res = await deleteQuestionApi(questionToDelete._id);
       setFeedback({
         type: "success",
-        message: res.message || (res.archived ? "Question archived." : "Question deleted."),
+        message:
+          res.message ||
+          (res.archived ? "Question archived." : "Question deleted."),
       });
       setDeleteDialogOpen(false);
       setQuestionToDelete(null);
       await loadQuestions();
       await loadMasterData();
     } catch (err) {
-      setFeedback({ type: "error", message: err.message || "Failed to delete question." });
+      setFeedback({
+        type: "error",
+        message: err.message || "Failed to delete question.",
+      });
     } finally {
       setActionBusy(false);
     }
@@ -186,7 +205,10 @@ export function QuestionBankPage() {
           title="Question Repository"
           description="Create, curate, and categorize questions across subjects, topics, and difficulty levels for timed examination papers."
           action={
-            <Button onClick={handleOpenCreate} className="flex items-center gap-1.5 shadow-xs">
+            <Button
+              onClick={handleOpenCreate}
+              className="flex items-center gap-1.5 shadow-xs"
+            >
               <Plus size={16} /> Create Question
             </Button>
           }
@@ -201,7 +223,11 @@ export function QuestionBankPage() {
             }`}
           >
             <div className="flex items-center gap-2">
-              {feedback.type === "error" ? <AlertCircle size={16} /> : <CheckCircle2 size={16} />}
+              {feedback.type === "error" ? (
+                <AlertCircle size={16} />
+              ) : (
+                <CheckCircle2 size={16} />
+              )}
               <span>{feedback.message}</span>
             </div>
             <button
@@ -232,9 +258,11 @@ export function QuestionBankPage() {
           </div>
 
           {loading ? (
-            <div className="bg-white border border-[#dfe3dc] rounded-2xl p-12 flex flex-col items-center justify-center gap-2 text-stone-400">
+            <div className="bg-white border border-stone-200 rounded-2xl p-12 flex flex-col items-center justify-center gap-2 text-stone-400">
               <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              <span className="text-xs font-medium">Loading repository questions…</span>
+              <span className="text-xs font-medium">
+                Loading repository questions…
+              </span>
             </div>
           ) : (
             <QuestionTable
