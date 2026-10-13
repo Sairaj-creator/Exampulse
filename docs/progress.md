@@ -321,6 +321,46 @@ Objective: apply professional finish across performance, responsive mobile usabi
 
 Verified on 2026-10-06.
 
+## Phase 10.1 — Defect pass and interface redesign
+
+Objective: fix the defects found in a full code and browser audit, and replace the visual layer with a token-based design system.
+
+- [x] Server fixes:
+  - Rate limiting counts signed-in requests per account (2000 / 15 min) and anonymous requests per IP (300 / 15 min). Failed logins are limited per IP + email (10) and per IP (100); successful logins are not counted. Previously one shared IP — a classroom — could exhaust the budget mid-exam.
+  - `TRUST_PROXY` environment variable sets Express `trust proxy` for deployments behind a reverse proxy.
+  - Timed-out attempts are stamped with their deadline instead of the time they happened to be finalized, so activity charts and trends stay on the correct day.
+  - Result ranking finalizes expired attempts first, matching the leaderboard.
+  - Administrators can add any teacher's questions to an exam; teachers remain limited to their own bank.
+  - Unknown-email logins take as long as wrong-password logins.
+  - Participation rate is capped at 100%.
+  - The seed refuses to run in production without `--force`.
+  - Auth tests create their own administrator instead of relying on seeded data.
+- [x] Client fixes:
+  - Exam builder: a failed save or publish now retries against the same draft instead of creating a duplicate; marks are validated before leaving the questions step; publishing with a past start time is caught before any request.
+  - Auto-submit failure offers a retry instead of a permanently disabled dialog.
+  - Validation failures show the field messages rather than "Validation error".
+  - Dialogs render in a portal and close on Escape.
+  - Sidebar highlights the current section on detail pages; administrators get links to the question bank and exams they already had access to.
+  - Teacher dashboard: the at-risk list scrolls instead of stretching the row, and lists the students furthest below their pass mark first.
+  - Student exam cards and the instructions page show when the exam opens and closes.
+  - Utilities that only exist in Tailwind 4 (`shadow-xs`, `border-3`, `backdrop-blur-xs`, `outline-hidden`) are defined, which restores the session-loading spinner.
+- [x] Interface redesign:
+  - "Pine, Bone & Marigold" palette as CSS variables with light and dark themes; self-hosted Manrope, Fraunces and JetBrains Mono.
+  - Glass surfaces over an ambient backdrop, a layered 3D hero scene with a rotating cube, pointer-tracked tilt on cards and KPI tiles, staggered page entrances, scroll reveals, animated switches, a day/night theme toggle with a circular wipe, and an animations on/off switch.
+  - Redesigned landing page, sign-in and registration, dashboard shell, status pages and dialogs.
+- [x] Verification:
+  - 166/166 tests passed (119 server across 12 suites, 47 client across 9 suites), including new rate-limit, regression, theme, dialog and builder tests.
+  - 126-check API walkthrough covering every endpoint as admin, teacher and student.
+  - Browser walkthroughs of the student exam flow, the teacher question and exam-builder flow, and the admin user, batch and subject flows, with no console errors or failed requests.
+  - Every page rendered in light, dark and mobile layouts; production build verified under the Helmet Content-Security-Policy.
+  - ESLint: 0 errors, 0 warnings. Production build succeeds with all chunks below 500 kB.
+
+- [x] Starter question banks:
+  - `server/src/seed/questionBank.js` holds ten questions each for Data Structures & Algorithms, Operating Systems and Computer Networks. The seed uses them only for a subject that has no questions, so existing banks are never changed.
+  - 19 data tests check the model and API rules, answer keys and grading for every bank (server suite now 138 tests across 13 suites).
+
+Verified on 2026-10-13.
+
 ## Remaining phases
 
 11. Deployment.
