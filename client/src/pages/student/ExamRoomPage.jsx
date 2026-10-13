@@ -33,7 +33,7 @@ export function ExamRoomPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center p-6 space-y-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 space-y-4">
         <Loader2 size={36} className="animate-spin text-stone-500" />
         <div className="text-center">
           <h2 className="text-base font-bold text-stone-900">
@@ -52,7 +52,7 @@ export function ExamRoomPage() {
       error.code === "ALREADY_SUBMITTED" || error.code === "ATTEMPT_EXPIRED";
 
     return (
-      <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <div className="bg-white rounded-3xl border border-stone-200 max-w-md w-full p-8 text-center space-y-5 shadow-xs">
           {isAlreadySubmitted ? (
             <div className="w-14 h-14 bg-emerald-100 text-emerald-800 rounded-2xl mx-auto flex items-center justify-center">
