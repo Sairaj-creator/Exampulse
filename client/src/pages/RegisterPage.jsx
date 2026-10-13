@@ -12,6 +12,9 @@ import { useAuth } from "../hooks/useAuth";
 import { getBatchesApi } from "../features/auth/api";
 import { AuthLayout } from "../components/layout/AuthLayout";
 import { Button } from "../components/ui/button";
+import { Field } from "../components/ui/Field";
+
+const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
 export function RegisterPage() {
   const { register } = useAuth();
@@ -27,20 +30,29 @@ export function RegisterPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     async function loadBatches() {
       try {
         const data = await getBatchesApi();
+        if (!isMounted) return;
         setBatches(data || []);
         if (data && data.length > 0) {
           setBatchId(data[0]._id);
         }
-      } catch (err) {
-        console.error("Failed to load batches:", err);
+      } catch {
+        if (isMounted) {
+          setError(
+            "Could not load the batch list. Check your connection and reload.",
+          );
+        }
       } finally {
-        setLoadingBatches(false);
+        if (isMounted) setLoadingBatches(false);
       }
     }
     loadBatches();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleSubmit = async (e) => {
@@ -52,9 +64,16 @@ export function RegisterPage() {
       return;
     }
 
+    if (!PASSWORD_PATTERN.test(password)) {
+      setError(
+        "Password must be at least 8 characters and include a letter and a number.",
+      );
+      return;
+    }
+
     setSubmitting(true);
     try {
-      await register({ name, email, password, batchId });
+      await register({ name: name.trim(), email, password, batchId });
       navigate("/student", { replace: true });
     } catch (err) {
       setError(
@@ -72,104 +91,77 @@ export function RegisterPage() {
       subtitle="Register with your batch to access timed assessments"
     >
       {error && (
-        <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-3">
-          <AlertCircle size={18} className="shrink-0 mt-0.5" />
+        <div
+          role="alert"
+          className="animate-pop mb-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+        >
+          <AlertCircle size={18} className="mt-0.5 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
-            Full Name
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
-              <User size={16} />
-            </span>
-            <input
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Alex Mercer"
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-hidden focus:border-stone-600 focus:ring-1 focus:ring-stone-600 bg-white"
-            />
-          </div>
-        </div>
+        <Field
+          label="Full Name"
+          icon={User}
+          required
+          minLength={2}
+          maxLength={100}
+          autoComplete="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Alex Mercer"
+        />
 
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
-            Email Address
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
-              <Mail size={16} />
-            </span>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="alex@college.edu"
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-hidden focus:border-stone-600 focus:ring-1 focus:ring-stone-600 bg-white"
-            />
-          </div>
-        </div>
+        <Field
+          label="Email Address"
+          icon={Mail}
+          type="email"
+          required
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="alex@college.edu"
+        />
 
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
-            Password (min 8 chars, 1 letter & 1 number)
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
-              <Lock size={16} />
-            </span>
-            <input
-              type="password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-hidden focus:border-stone-600 focus:ring-1 focus:ring-stone-600 bg-white"
-            />
-          </div>
-        </div>
+        <Field
+          label="Password"
+          hint="At least 8 characters, with a letter and a number."
+          icon={Lock}
+          type="password"
+          required
+          minLength={8}
+          autoComplete="new-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="••••••••"
+        />
 
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
-            Assigned Batch
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
-              <Layers size={16} />
-            </span>
-            <select
-              value={batchId}
-              onChange={(e) => setBatchId(e.target.value)}
-              disabled={loadingBatches}
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-hidden focus:border-stone-600 focus:ring-1 focus:ring-stone-600 bg-white"
-            >
-              {loadingBatches ? (
-                <option value="">Loading batches...</option>
-              ) : batches.length === 0 ? (
-                <option value="">No active batches found</option>
-              ) : (
-                batches.map((b) => (
-                  <option key={b._id} value={b._id}>
-                    {b.name} ({b.year})
-                  </option>
-                ))
-              )}
-            </select>
-          </div>
-        </div>
+        <Field
+          label="Assigned Batch"
+          icon={Layers}
+          as="select"
+          value={batchId}
+          onChange={(e) => setBatchId(e.target.value)}
+          disabled={loadingBatches}
+        >
+          {loadingBatches ? (
+            <option value="">Loading batches...</option>
+          ) : batches.length === 0 ? (
+            <option value="">No active batches found</option>
+          ) : (
+            batches.map((b) => (
+              <option key={b._id} value={b._id}>
+                {b.name} ({b.year})
+              </option>
+            ))
+          )}
+        </Field>
 
-        <Button type="submit" disabled={submitting} className="w-full mt-2">
+        <Button type="submit" disabled={submitting} className="mt-2 w-full">
           {submitting ? (
             <span className="inline-flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               Creating account…
             </span>
           ) : (
@@ -184,7 +176,7 @@ export function RegisterPage() {
         Already have an account?{" "}
         <Link
           to="/login"
-          className="font-semibold text-emerald-800 hover:underline"
+          className="font-semibold text-emerald-700 hover:underline"
         >
           Sign in
         </Link>
