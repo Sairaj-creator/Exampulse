@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { DashboardLayout } from "../../components/layout/DashboardLayout";
 import { PageHeader } from "../../components/common/PageHeader";
 import { Button } from "../../components/ui/button";
+import { Switch } from "../../components/ui/Switch";
 import { listBatchesApi } from "../../features/admin/api";
 import {
   addExamQuestionsApi,
@@ -73,6 +74,9 @@ export function ExamBuilderPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const editing = Boolean(id);
+  // Set once the exam exists on the server, so a retried save updates that
+  // draft instead of creating a duplicate.
+  const [examId, setExamId] = useState(id || null);
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(initialForm);
   const [selected, setSelected] = useState([]);
@@ -191,6 +195,14 @@ export function ExamBuilderPage() {
       return "Add a title and choose a subject.";
     if (step === 1 && selected.length === 0)
       return "Select at least one question.";
+    if (
+      step === 1 &&
+      selected.some((question) => {
+        const marks = Number(question.marks);
+        return !Number.isFinite(marks) || marks < 0.5 || marks > 100;
+      })
+    )
+      return "Marks for every question must be between 0.5 and 100.";
     if (step === 2) {
       if (!form.batchIds.length) return "Assign at least one batch.";
       if (
@@ -275,12 +287,17 @@ export function ExamBuilderPage() {
   const save = async (publish) => {
     const message = validateStep();
     if (message) return setPageError(message);
+    if (publish && new Date(form.startTime) <= new Date())
+      return setPageError(
+        "The start time has already passed. Go back and choose a future start time before publishing.",
+      );
     setBusy(true);
     setPageError("");
     try {
-      const exam = editing
-        ? await updateExamApi(id, buildPayload())
+      const exam = examId
+        ? await updateExamApi(examId, buildPayload())
         : await createExamApi(buildPayload());
+      setExamId(exam._id);
       await syncQuestions(exam._id, exam);
       if (publish) await publishExamApi(exam._id);
       toast.success(publish ? "Exam published" : "Draft saved");
@@ -316,7 +333,8 @@ export function ExamBuilderPage() {
           {steps.map((name, index) => (
             <li
               key={name}
-              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold ${index === step ? "bg-primary text-white" : index < step ? "bg-emerald-50 text-emerald-800" : "text-stone-400"}`}
+              aria-current={index === step ? "step" : undefined}
+              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-500 ease-out-expo ${index === step ? "bg-primary text-white shadow-lift" : index < step ? "bg-emerald-50 text-emerald-800" : "text-stone-400"}`}
             >
               <span
                 className={`flex h-6 w-6 items-center justify-center rounded-full ${index === step ? "bg-white/20" : "bg-stone-100"}`}
@@ -336,7 +354,10 @@ export function ExamBuilderPage() {
           </div>
         )}
 
-        <section className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
+        <section
+          key={step}
+          className="animate-rise rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7"
+        >
           {step === 0 && (
             <div className="space-y-5">
               <div>
@@ -657,15 +678,13 @@ export function ExamBuilderPage() {
                 ].map(([key, label]) => (
                   <label
                     key={key}
-                    className="flex cursor-pointer items-center gap-3 rounded-xl border border-stone-200 p-4 text-sm font-semibold text-stone-700"
+                    className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-4 text-sm font-semibold transition-colors ${form[key] ? "border-emerald-600 bg-emerald-50 text-emerald-900" : "border-stone-200 text-stone-700"}`}
                   >
-                    <input
-                      type="checkbox"
+                    {label}
+                    <Switch
                       checked={form[key]}
                       onChange={(event) => setValue(key, event.target.checked)}
-                      className="h-4 w-4 accent-emerald-800"
                     />
-                    {label}
                   </label>
                 ))}
               </div>
@@ -742,7 +761,7 @@ export function ExamBuilderPage() {
                   </dt>
                   <dd className="mt-1 font-semibold text-stone-900">
                     {form.negativeEnabled
-                      ? `${form.penaltyFraction}× negative marking`
+                      ? `${Math.round(Number(form.penaltyFraction) * 100)}% penalty per wrong answer`
                       : "No negative marking"}{" "}
                     · {form.reviewPolicy.replace("_", " ")}
                   </dd>
