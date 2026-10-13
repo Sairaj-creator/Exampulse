@@ -60,7 +60,9 @@ export function StudentDashboard() {
     return (
       <DashboardLayout>
         <AnalyticsErrorState
-          message={error?.message || "Failed to load your performance dashboard."}
+          message={
+            error?.message || "Failed to load your performance dashboard."
+          }
           onRetry={refetch}
         />
       </DashboardLayout>
@@ -71,7 +73,7 @@ export function StudentDashboard() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Welcome Banner */}
-        <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+        <div className="bg-white border border-stone-200 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
           <div>
             <div className="text-xs font-bold uppercase tracking-wider text-emerald-800 mb-1">
               Student Workspace · {user?.batchId?.name || "Assigned Batch"}
@@ -100,7 +102,7 @@ export function StudentDashboard() {
 
         {/* Metric Cards Shell */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 Exams Taken
@@ -111,11 +113,14 @@ export function StudentDashboard() {
               {overview.examsTaken}
             </div>
             <div className="text-[11px] text-stone-400 mt-1">
-              Latest: <span className="font-semibold text-stone-700">{overview.latestScore}%</span>
+              Latest:{" "}
+              <span className="font-semibold text-stone-700">
+                {overview.latestScore}%
+              </span>
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 Performance Average
@@ -130,7 +135,7 @@ export function StudentDashboard() {
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 Peak Score
@@ -145,7 +150,7 @@ export function StudentDashboard() {
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-5 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center justify-between text-stone-500 mb-2">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 3-vs-3 Trajectory
@@ -160,24 +165,38 @@ export function StudentDashboard() {
             </div>
             <div className="text-2xl font-bold text-stone-900">
               {improvement.available ? (
-                <span className={improvement.delta >= 0 ? "text-emerald-700" : "text-rose-700"}>
-                  {improvement.delta > 0 ? `+${improvement.delta}%` : `${improvement.delta}%`}
+                <span
+                  className={
+                    improvement.delta >= 0
+                      ? "text-emerald-700"
+                      : "text-rose-700"
+                  }
+                >
+                  {improvement.delta > 0
+                    ? `+${improvement.delta}%`
+                    : `${improvement.delta}%`}
                 </span>
               ) : (
-                <span className="text-stone-400 text-base font-semibold">Building history</span>
+                <span className="text-stone-400 text-base font-semibold">
+                  Building history
+                </span>
               )}
             </div>
             <div className="text-[11px] text-stone-400 mt-1">
-              {improvement.available ? "Last 3 vs prior 3 exams" : `${overview.examsTaken}/6 exams taken`}
+              {improvement.available
+                ? "Last 3 vs prior 3 exams"
+                : `${overview.examsTaken}/6 exams taken`}
             </div>
           </div>
         </div>
 
         {/* Visual Trend vs Batch Average */}
-        {(
+        {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-stone-900">Assessment Trajectory</h2>
+              <h2 className="text-sm font-bold text-stone-900">
+                Assessment Trajectory
+              </h2>
               <Link
                 to="/student/analytics"
                 className="text-xs font-semibold text-emerald-800 hover:text-emerald-900 flex items-center gap-1"
@@ -187,11 +206,11 @@ export function StudentDashboard() {
             </div>
             <TrendChart data={analytics?.trend || []} height={260} />
           </div>
-        )}
+        }
 
         {/* Quick Links & Instructions Card */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
             <h2 className="text-lg font-bold text-stone-900 mb-2">
               Quick Navigation
             </h2>
@@ -223,7 +242,7 @@ export function StudentDashboard() {
             </div>
           </div>
 
-          <div className="bg-white border border-[#dfe3dc] rounded-2xl p-6 shadow-xs">
+          <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs">
             <h2 className="text-lg font-bold text-stone-900 mb-2">
               Exam Integrity Notice
             </h2>
