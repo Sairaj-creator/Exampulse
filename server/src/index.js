@@ -6,9 +6,11 @@ import { startExpiredAttemptsSweeper } from "./jobs/expiredAttemptsSweeper.js";
 const env = loadEnv();
 await connectDatabase(env.MONGO_URI);
 const sweeper = startExpiredAttemptsSweeper();
-const server = createApp({ production: env.NODE_ENV === "production" }).listen(
-  env.PORT,
-  () => console.log(`ExamPulse API listening on port ${env.PORT}`),
+const server = createApp({
+  production: env.NODE_ENV === "production",
+  trustProxy: env.TRUST_PROXY,
+}).listen(env.PORT, () =>
+  console.log(`ExamPulse API listening on port ${env.PORT}`),
 );
 async function shutdown() {
   if (sweeper) sweeper.stop();
