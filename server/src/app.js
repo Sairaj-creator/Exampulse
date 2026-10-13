@@ -22,9 +22,14 @@ import { analyticsRoutes } from "./routes/analyticsRoutes.js";
 export function createApp({
   isDatabaseConnected = databaseConnected,
   production = false,
+  trustProxy = 0,
 } = {}) {
   const app = express();
   app.disable("x-powered-by");
+
+  // Behind a reverse proxy the client IP comes from X-Forwarded-For; without
+  // this every visitor would share the proxy's address in the rate limiter.
+  if (trustProxy) app.set("trust proxy", trustProxy);
 
   app.use(helmet());
   app.use(express.json({ limit: "100kb" }));
