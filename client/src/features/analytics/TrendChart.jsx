@@ -11,14 +11,21 @@ import {
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 
-export function TrendChart({ data = [], height = 300, title = "Performance Trend vs Batch Average" }) {
+export function TrendChart({
+  data = [],
+  height = 300,
+  title = "Performance Trend vs Batch Average",
+}) {
   if (!data || data.length === 0) {
     return (
       <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs flex flex-col items-center justify-center text-center h-[300px]">
         <TrendingUp size={32} className="text-stone-300 mb-2" />
-        <h3 className="text-sm font-bold text-stone-700">No Assessment Trend Yet</h3>
+        <h3 className="text-sm font-bold text-stone-700">
+          No Assessment Trend Yet
+        </h3>
         <p className="text-xs text-stone-400 mt-1 max-w-xs">
-          Take your first scheduled examination to unlock chronological progress tracking against your cohort.
+          Take your first scheduled examination to unlock chronological progress
+          tracking against your cohort.
         </p>
       </div>
     );
@@ -27,9 +34,10 @@ export function TrendChart({ data = [], height = 300, title = "Performance Trend
   // Format data for chart
   const chartData = data.map((item, idx) => ({
     name: item.examTitle || `Exam ${idx + 1}`,
-    shortName: (item.examTitle || `Exam ${idx + 1}`).length > 15
-      ? `${(item.examTitle || "").slice(0, 15)}…`
-      : item.examTitle,
+    shortName:
+      (item.examTitle || `Exam ${idx + 1}`).length > 15
+        ? `${(item.examTitle || "").slice(0, 15)}…`
+        : item.examTitle,
     Student: Number(item.percentage) || 0,
     BatchAverage: Number(item.batchAvg) || 0,
     date: item.date ? new Date(item.date).toLocaleDateString() : "",
@@ -48,18 +56,25 @@ export function TrendChart({ data = [], height = 300, title = "Performance Trend
 
       <div style={{ width: "100%", height }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 10, right: 20, left: -15, bottom: 25 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0ee" />
+          <LineChart
+            data={chartData}
+            margin={{ top: 10, right: 20, left: -15, bottom: 25 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              vertical={false}
+              stroke="rgb(var(--c-stone-200))"
+            />
             <XAxis
               dataKey="shortName"
-              tick={{ fontSize: 11, fill: "#78716c" }}
+              tick={{ fontSize: 11, fill: "rgb(var(--c-stone-500))" }}
               angle={-20}
               textAnchor="end"
               height={40}
             />
             <YAxis
               domain={[0, 100]}
-              tick={{ fontSize: 11, fill: "#78716c" }}
+              tick={{ fontSize: 11, fill: "rgb(var(--c-stone-500))" }}
               tickFormatter={(v) => `${v}%`}
             />
             <Tooltip
@@ -68,17 +83,27 @@ export function TrendChart({ data = [], height = 300, title = "Performance Trend
                   const entry = payload[0].payload;
                   return (
                     <div className="bg-stone-900 text-white rounded-xl px-3 py-2 text-xs shadow-lg space-y-1">
-                      <div className="font-bold text-stone-200">{entry.name}</div>
-                      {entry.date && <div className="text-[10px] text-stone-400">{entry.date}</div>}
+                      <div className="font-bold text-stone-200">
+                        {entry.name}
+                      </div>
+                      {entry.date && (
+                        <div className="text-[10px] text-stone-400">
+                          {entry.date}
+                        </div>
+                      )}
                       <div className="flex items-center gap-2 pt-1">
                         <span className="w-2 h-2 rounded-full bg-emerald-400" />
                         <span className="text-stone-300">Your Score:</span>
-                        <span className="font-bold text-white">{entry.Student}%</span>
+                        <span className="font-bold text-white">
+                          {entry.Student}%
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-stone-400" />
                         <span className="text-stone-300">Batch Average:</span>
-                        <span className="font-bold text-stone-300">{entry.BatchAverage}%</span>
+                        <span className="font-bold text-stone-300">
+                          {entry.BatchAverage}%
+                        </span>
                       </div>
                     </div>
                   );
@@ -95,19 +120,19 @@ export function TrendChart({ data = [], height = 300, title = "Performance Trend
               type="monotone"
               dataKey="Student"
               name="Your Score"
-              stroke="#059669"
+              stroke="rgb(var(--c-emerald-600))"
               strokeWidth={2.5}
-              dot={{ r: 4, fill: "#059669" }}
+              dot={{ r: 4, fill: "rgb(var(--c-emerald-600))" }}
               activeDot={{ r: 6 }}
             />
             <Line
               type="monotone"
               dataKey="BatchAverage"
               name="Batch Average"
-              stroke="#a8a29e"
+              stroke="rgb(var(--c-stone-400))"
               strokeWidth={2}
               strokeDasharray="4 4"
-              dot={{ r: 3, fill: "#a8a29e" }}
+              dot={{ r: 3, fill: "rgb(var(--c-stone-400))" }}
             />
           </LineChart>
         </ResponsiveContainer>
