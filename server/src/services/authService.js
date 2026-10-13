@@ -2,6 +2,14 @@ import { User, Batch } from "../models/index.js";
 import { hashPassword, comparePassword } from "../utils/passwords.js";
 import { ApiError } from "../utils/response.js";
 
+// Compared against when the email is unknown, so the response time does not
+// reveal which addresses have accounts.
+let dummyHashPromise = null;
+function dummyHash() {
+  dummyHashPromise ??= hashPassword("exampulse-unknown-account");
+  return dummyHashPromise;
+}
+
 function formatUser(user) {
   const userObj = user.toObject ? user.toObject() : { ...user };
   delete userObj.passwordHash;
@@ -46,6 +54,7 @@ export async function loginUser({ email, password }) {
     .populate("batchId", "name year");
 
   if (!user) {
+    await comparePassword(password, await dummyHash());
     throw ApiError.unauthorized("Invalid email or password");
   }
 
